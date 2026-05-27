@@ -1,0 +1,10 @@
+fastapi==0.111.0
+uvicorn==0.29.0
+httpx==0.27.0
+anthropic==0.28.0
+python-dotenv==1.0.1
+gspread==6.1.2
+google-auth==2.29.0
+requests==2.31.0
+phonenumbers==8.13.37
+email-validator==2.1.1
