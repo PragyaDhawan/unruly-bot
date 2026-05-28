@@ -9,14 +9,13 @@ from config.settings import TELEGRAM_API_URL
 
 
 def send_message(chat_id: int, text: str, parse_mode: str = "HTML") -> dict:
-    """Send a plain text message."""
-    payload = {
-        "chat_id":    chat_id,
-        "text":       text,
-        "parse_mode": parse_mode,
-    }
-    r = requests.post(f"{TELEGRAM_API_URL}/sendMessage", json=payload, timeout=10)
-    return r.json()
+    try:
+        payload = {"chat_id": chat_id, "text": text, "parse_mode": parse_mode}
+        r = requests.post(f"{TELEGRAM_API_URL}/sendMessage", json=payload, timeout=10)
+        return r.json()
+    except Exception as e:
+        print(f"[telegram] send_message failed: {e}")
+        return {"ok": False, "error": str(e)}
 
 def send_group_message(chat_id: str, text: str, parse_mode: str = "HTML") -> dict:
     payload = {
@@ -67,12 +66,15 @@ def edit_message_reply_markup(chat_id: int, message_id: int, buttons: list) -> d
 
 
 def send_typing(chat_id: int):
-    """Show 'typing...' indicator while processing."""
-    requests.post(
-        f"{TELEGRAM_API_URL}/sendChatAction",
-        json={"chat_id": chat_id, "action": "typing"},
-        timeout=5
-    )
+    """Show 'typing...' indicator while processing. Fail silently if Telegram is slow."""
+    try:
+        requests.post(
+            f"{TELEGRAM_API_URL}/sendChatAction",
+            json={"chat_id": chat_id, "action": "typing"},
+            timeout=2,
+        )
+    except Exception as e:
+        print(f"[telegram] send_typing failed: {e}")
 
 
 # ── Pre-built keyboard layouts ────────────────────────────────────────────────

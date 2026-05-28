@@ -57,7 +57,7 @@ def append_to_google_sheets(data: dict) -> bool:
         ]
 
         print("[storage] Row being appended:")
-        print(row)
+        # print(row)
 
         result = sheet.values().append(
             spreadsheetId=GOOGLE_SHEET_ID,
@@ -193,9 +193,7 @@ def save_submission(data: dict):
     Centralized persistence for all creator submissions.
     Saves to:
       - Google Sheets
-      - Monday CRM
     """
-    print("[storage] save_submission CALLED")
     print("\n[storage] ===== SAVE SUBMISSION START =====")
     print(f"[storage] Creator: {data.get('name')}")
     print(f"[storage] Instagram: @{data.get('instagram')}")

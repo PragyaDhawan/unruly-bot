@@ -57,7 +57,7 @@ def get_profile(username: str) -> dict:
             timeout=10
         )
         data = r.json()
-        return data.get("data", data)
+        return data
     except Exception as e:
         print(f"[social_metrics] get_profile error: {e}")
         return {}
@@ -177,8 +177,8 @@ def get_metrics(username: str) -> dict:
 
     # Step 1 — Profile
     profile = get_profile(username)
-    # print("[social_metrics] profile:", profile)
-    # print("[social_metrics] follower_count raw:", profile.get("follower_count"))
+    print("[social_metrics] profile:", profile)
+    print("[social_metrics] follower_count raw:", profile.get("follower_count"))
     # print("[social_metrics] keys:", list(profile.keys()))
     if not profile:
         empty["error"] = "Instagram profile not found. Please double-check the handle."
@@ -186,17 +186,17 @@ def get_metrics(username: str) -> dict:
 
     follower_count = (
         profile.get("follower_count")
-        or profile.get("followers_count")
-        or profile.get("edge_followed_by", {}).get("count", 0)
-        or 0
+        # or profile.get("followers_count")
+        # or profile.get("edge_followed_by", {}).get("count", 0)
+        # or 0
     )
 
     # Step 2 — Resolve user_id (profile usually includes id or pk)
     user_id = str(
-        profile.get("id")
-        or profile.get("pk")
-        or get_user_id(username)
-        or ""
+        # profile.get("id")
+        profile.get("pk")
+        # or get_user_id(username)
+        # or ""
     )
 
     # Step 3 — Feed for avg likes/comments

@@ -187,6 +187,7 @@ async def handle_reviewing(chat_id: int, text: str = ""):
 
     # Pull metrics from RapidAPI
     metrics = get_metrics(instagram)
+    print("[flow] metrics:", metrics)
 
     if not metrics["found"]:
         send_message(
@@ -321,7 +322,7 @@ async def handle_routing(chat_id: int, text: str = ""):
     sess.save_field(chat_id, "qualified", True)
     sess.save_field(chat_id, "call_status", "Qualified / Routed")
 
-    send_typing(chat_id)
+    # send_typing(chat_id)
 
     # Save to Sheets / Monday
     save_submission(sess.get_data(chat_id))
