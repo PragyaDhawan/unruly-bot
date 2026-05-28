@@ -2,6 +2,8 @@
 
 AI-powered Telegram onboarding chatbot for creator qualification, lead routing, and submission tracking.
 
+Demo (Video) - https://youtu.be/xPIhtrSwx10
+
 ---
 
 # Features
