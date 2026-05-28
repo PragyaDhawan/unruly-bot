@@ -63,11 +63,13 @@ def build_ta_alert(creator_data: dict, ta_handle: str) -> str:
     followers    = creator_data.get("followers", 0)
     avg_likes    = creator_data.get("avg_likes", 0)
     engagement   = creator_data.get("engagement_rate", 0)
+    assigned_ta = creator_data.get("assigned_ta", "Unassigned")
     monetization = ", ".join(creator_data.get("monetization", [])) or "N/A"
     goals        = ", ".join(creator_data.get("goals", [])) or "N/A"
 
     return (
-        f"🔥 <b>New Qualified Creator — Assigned to you!</b>\n\n"
+        f"🔥 <b>New Qualified Creator!</b>\n\n"
+        f"👤 <b>Assigned TA:</b> {assigned_ta}\n\n"
         f"👤 <b>Name:</b> {name}\n"
         f"📧 <b>Email:</b> {email}\n"
         f"📱 <b>Phone:</b> {phone}\n"

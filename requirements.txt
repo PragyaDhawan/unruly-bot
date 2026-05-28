@@ -8,3 +8,8 @@ google-auth==2.29.0
 requests==2.31.0
 phonenumbers==8.13.37
 email-validator==2.1.1
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+gspread

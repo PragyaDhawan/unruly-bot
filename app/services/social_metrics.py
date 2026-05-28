@@ -177,6 +177,9 @@ def get_metrics(username: str) -> dict:
 
     # Step 1 — Profile
     profile = get_profile(username)
+    # print("[social_metrics] profile:", profile)
+    # print("[social_metrics] follower_count raw:", profile.get("follower_count"))
+    # print("[social_metrics] keys:", list(profile.keys()))
     if not profile:
         empty["error"] = "Instagram profile not found. Please double-check the handle."
         return empty

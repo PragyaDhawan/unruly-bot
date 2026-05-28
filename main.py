@@ -28,8 +28,6 @@ async def lifespan(app: FastAPI):
     phase3_optional = {
         # "ABSTRACT_API_KEY":  os.getenv("ABSTRACT_API_KEY"),
         "GOOGLE_SHEET_ID":   os.getenv("GOOGLE_SHEET_ID"),
-        "MONDAY_API_KEY":    os.getenv("MONDAY_API_KEY"),
-        "SLACK_WEBHOOK_URL": os.getenv("SLACK_WEBHOOK_URL"),
     }
 
     missing_required = [k for k, v in phase2_required.items() if not v]

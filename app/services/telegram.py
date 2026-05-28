@@ -18,6 +18,15 @@ def send_message(chat_id: int, text: str, parse_mode: str = "HTML") -> dict:
     r = requests.post(f"{TELEGRAM_API_URL}/sendMessage", json=payload, timeout=10)
     return r.json()
 
+def send_group_message(chat_id: str, text: str, parse_mode: str = "HTML") -> dict:
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": parse_mode,
+    }
+    r = requests.post(f"{TELEGRAM_API_URL}/sendMessage", json=payload, timeout=10)
+    return r.json()
+
 
 def send_inline_keyboard(chat_id: int, text: str, buttons: list, parse_mode: str = "HTML") -> dict:
     """

@@ -2,6 +2,7 @@ import re
 import requests
 import os
 from dotenv import load_dotenv
+from config.settings import SKIP_EXTERNAL_VALIDATION
 
 load_dotenv()
 
@@ -18,6 +19,10 @@ def validate_email(email: str) -> dict:
     if not EMAIL_REGEX.match(email):
         return {"valid": False, "reason": "That doesn't look like a valid email address.", "normalized": email}
 
+    if SKIP_EXTERNAL_VALIDATION:
+        print(f"[validation] Email validation bypassed for testing: {email}")
+        return {"valid": True, "reason": "bypassed", "normalized": email}
+
     if not ABSTRACT_EMAIL_API_KEY:
         return {"valid": True, "reason": "ok", "normalized": email}
     print(f"[validation] Calling Abstract email API for: {email}")
@@ -31,7 +36,7 @@ def validate_email(email: str) -> dict:
             timeout=10,
         )
         print(f"[validation] Abstract email status: {r.status_code}")
-        print(f"[validation] Abstract email response: {r.text[:500]}")
+        # print(f"[validation] Abstract email response: {r.text[:500]}")
         r.raise_for_status()
         data = r.json()
 
@@ -71,6 +76,10 @@ def validate_phone(phone: str) -> dict:
 
     if not PHONE_REGEX.match(raw):
         return {"valid": False, "reason": "That doesn't look like a valid phone number. Please include your country code.", "normalized": raw}
+    
+    if SKIP_EXTERNAL_VALIDATION:
+        print(f"[validation] Phone validation bypassed for testing: {raw}")
+        return {"valid": True, "reason": "bypassed", "normalized": raw}
 
     if not ABSTRACT_PHONE_API_KEY:
         return {"valid": True, "reason": "ok", "normalized": raw}

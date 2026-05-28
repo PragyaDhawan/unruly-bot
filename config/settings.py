@@ -18,9 +18,6 @@ OPENAI_MODEL    = "gpt-4o-mini"   # Cheapest smart model — ~$0.15 per 1M token
 
 # ── SOCIAL METRICS ────────────────────────────────────────────────────────────
 RAPIDAPI_KEY         = os.getenv("RAPIDAPI_KEY")
-PHYLLO_CLIENT_ID     = os.getenv("PHYLLO_CLIENT_ID")
-PHYLLO_CLIENT_SECRET = os.getenv("PHYLLO_CLIENT_SECRET")
-HYPEAUDITOR_API_KEY  = os.getenv("HYPEAUDITOR_API_KEY")
 
 # ── VALIDATION ────────────────────────────────────────────────────────────────
 ABSTRACT_EMAIL_API_KEY = os.getenv("ABSTRACT_EMAIL_API_KEY")
@@ -31,15 +28,12 @@ DEFAULT_PHONE_COUNTRY   = os.getenv("DEFAULT_PHONE_COUNTRY", "")  # optional, e.
 GOOGLE_SERVICE_ACCOUNT_JSON = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON", "service_account.json")
 GOOGLE_SHEET_ID             = os.getenv("GOOGLE_SHEET_ID")
 
-# ── MONDAY CRM ────────────────────────────────────────────────────────────────
-MONDAY_API_KEY  = os.getenv("MONDAY_API_KEY")
-MONDAY_BOARD_ID = os.getenv("MONDAY_BOARD_ID")
-
-# ── SLACK ─────────────────────────────────────────────────────────────────────
-SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
+SKIP_EXTERNAL_VALIDATION = os.getenv("SKIP_EXTERNAL_VALIDATION", "false").lower() == "true"
+SKIP_QUALIFICATION = os.getenv("SKIP_QUALIFICATION", "false").lower() == "true"
 
 # ── TALENT ACQUISITION TEAM ───────────────────────────────────────────────────
 _ta_raw = os.getenv("TA_MEMBERS", "")
+TA_GROUP_CHAT_ID = os.getenv("TA_GROUP_CHAT_ID")
 TA_MEMBERS = [m.strip() for m in _ta_raw.split(",") if m.strip()]
 
 # ── QUALIFICATION THRESHOLDS ──────────────────────────────────────────────────
@@ -59,8 +53,6 @@ def validate_config():
         "ABSTRACT_EMAIL_API_KEY":   ABSTRACT_EMAIL_API_KEY,
         "ABSTRACT_PHONE_API_KEY":   ABSTRACT_PHONE_API_KEY,
         "GOOGLE_SHEET_ID":    GOOGLE_SHEET_ID,
-        "MONDAY_API_KEY":     MONDAY_API_KEY,
-        "MONDAY_BOARD_ID":    MONDAY_BOARD_ID,
     }
     missing = [k for k, v in required.items() if not v]
     if missing:

@@ -18,7 +18,9 @@ from app.services.telegram import (
 from app.services.validation import validate_email, validate_phone, validate_instagram
 from app.services.social_metrics import get_metrics, qualify_creator
 from app.services.routing import assign_ta, build_intro_message, build_ta_alert
-from config.settings import MIN_FOLLOWERS, MIN_AVG_LIKES
+from app.services.storage import save_submission
+from config.settings import MIN_FOLLOWERS, MIN_AVG_LIKES, SKIP_QUALIFICATION, TA_GROUP_CHAT_ID
+from app.services.telegram import send_group_message
 
 
 # ── Entry point — called on every incoming text message ──────────────────────
@@ -201,13 +203,20 @@ async def handle_reviewing(chat_id: int, text: str = ""):
     sess.save_field(chat_id, "avg_comments",    metrics["avg_comments"])
     sess.save_field(chat_id, "engagement_rate", metrics["engagement_rate"])
 
+    if SKIP_QUALIFICATION:
+        print("[flow] Qualification bypassed for testing")
+        qualification = {"qualified": True, "message": None}
+    else:
+        qualification = qualify_creator(metrics, MIN_FOLLOWERS, MIN_AVG_LIKES)
     # Run qualification check
-    qualification = qualify_creator(metrics, MIN_FOLLOWERS, MIN_AVG_LIKES)
+    #qualification = qualify_creator(metrics, MIN_FOLLOWERS, MIN_AVG_LIKES)
+    
     sess.save_field(chat_id, "qualified", qualification["qualified"])
 
     if not qualification["qualified"]:
         sess.set_state(chat_id, "DISQUALIFIED")
-        send_message(chat_id, qualification["message"])
+        await handle_disqualified(chat_id)
+        # send_message(chat_id, qualification["message"])
         return
 
     # Qualified — show their stats and continue
@@ -306,22 +315,25 @@ async def handle_routing(chat_id: int, text: str = ""):
     from datetime import datetime
     sess.set_state(chat_id, "ROUTING")
 
-    data = sess.get_data(chat_id)
-
-    # Assign TA member
     ta_handle = assign_ta()
-    sess.save_field(chat_id, "assigned_ta",    ta_handle)
+    sess.save_field(chat_id, "assigned_ta", ta_handle)
     sess.save_field(chat_id, "date_submitted", datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"))
+    sess.save_field(chat_id, "qualified", True)
+    sess.save_field(chat_id, "call_status", "Qualified / Routed")
 
     send_typing(chat_id)
 
-    # Send intro message to creator
-    intro = build_intro_message(data, ta_handle)
-    send_message(chat_id, intro)
+    # Save to Sheets / Monday
+    save_submission(sess.get_data(chat_id))
 
-    # TODO Phase 3: save to Google Sheets + Monday CRM
-    # TODO Phase 3: send Slack alert to internal team
-    # TODO Phase 3: send TA alert message
+    # Internal alert to Telegram group
+    ta_alert = build_ta_alert(sess.get_data(chat_id), ta_handle)
+    if TA_GROUP_CHAT_ID:
+        send_group_message(TA_GROUP_CHAT_ID, ta_alert)
+
+    # Creator-facing intro
+    intro = build_intro_message(sess.get_data(chat_id), ta_handle)
+    send_message(chat_id, intro)
 
     sess.set_state(chat_id, "DONE")
 
@@ -329,10 +341,17 @@ async def handle_routing(chat_id: int, text: str = ""):
 # ── STATE: DISQUALIFIED ───────────────────────────────────────────────────────
 
 async def handle_disqualified(chat_id: int, text: str = ""):
+    print("[flow] ENTERED DISQUALIFIED STATE")
+    sess.save_field(chat_id, "qualified", False)
+    sess.save_field(chat_id, "call_status", "Not Qualified")
+    save_submission(sess.get_data(chat_id))
+
     send_message(
         chat_id,
-        "We've saved your information and will reach out if the right opportunity comes up. 💛\n\n"
-        "In the meantime, keep creating! Type /start if you'd like to reapply in the future."
+        "Thank you so much for your inquiry. Based on your current socials, "
+        "we may not have the right opportunity available at this time, but "
+        "we'll keep your information on file and reach back out if something "
+        "aligns in the future. 💛"
     )
 
 
