@@ -37,6 +37,7 @@ htmlcov/
 .env
 .env.*
 *.local
+service_account.json
 
 # Logs and runtime files
 *.log
