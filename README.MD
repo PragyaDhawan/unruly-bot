@@ -48,7 +48,7 @@ main.py
 
 ```bash
 git clone <repo>
-cd unruly-bot-phase1
+cd unruly-bot
 ```
 
 ## Create Virtual Environment
